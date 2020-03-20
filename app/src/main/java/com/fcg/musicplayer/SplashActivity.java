@@ -1,5 +1,6 @@
 package com.fcg.musicplayer;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import androidx.core.view.GestureDetectorCompat;
 
 import com.fcg.musicplayer.Data.MusicInfo;
 import com.fcg.musicplayer.Unit.MusicUnit;
+import com.fcg.musicplayer.Unit.PermissionUnit;
 
 import java.util.ArrayList;
 
@@ -28,6 +30,9 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.spalsh_activity);
+
+        PermissionUnit permissionUnit = new PermissionUnit(this);
+        permissionUnit.applyPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
 
         Slide slideTransition = new Slide();
         slideTransition.setSlideEdge(Gravity.LEFT);

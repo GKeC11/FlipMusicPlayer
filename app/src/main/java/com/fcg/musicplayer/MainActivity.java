@@ -64,9 +64,6 @@ public class MainActivity extends AppCompatActivity {
         playBarController.init(getSupportFragmentManager());
         PlayerController.get().addListener(playBarController);
 
-        PermissionUnit permissionUnit = new PermissionUnit(this);
-        permissionUnit.applyPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
-
         viewPager = findViewById(R.id.viewPager);
         thread = new Thread(new Runnable() {
             @Override
