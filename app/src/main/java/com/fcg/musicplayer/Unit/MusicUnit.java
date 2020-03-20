@@ -1,11 +1,12 @@
-package com.fcg.musicplayer;
+package com.fcg.musicplayer.Unit;
 
-import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+
+import com.fcg.musicplayer.Data.MusicInfo;
 
 import java.util.ArrayList;
 

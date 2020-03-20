@@ -1,4 +1,6 @@
-package com.fcg.musicplayer;
+package com.fcg.musicplayer.Listener;
+
+import com.fcg.musicplayer.Data.MusicInfo;
 
 public interface PlayBarListener {
     void onPlay(MusicInfo musicInfo);

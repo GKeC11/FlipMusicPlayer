@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MusicPlayer</string>
     <string name="music_list">MusicList</string>
+    <string name="service_name">MediaPlaybackService</string>
 </resources>

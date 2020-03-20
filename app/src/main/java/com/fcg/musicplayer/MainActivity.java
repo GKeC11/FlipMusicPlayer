@@ -2,7 +2,7 @@ package com.fcg.musicplayer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityOptionsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -10,7 +10,6 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
-import android.app.ActivityOptions;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,16 +17,21 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.transition.Explode;
 import android.transition.Fade;
-import android.transition.Slide;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
-import android.transition.Visibility;
-import android.view.Gravity;
-import android.view.Window;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 
+import com.fcg.musicplayer.Controller.PlayBarController;
+import com.fcg.musicplayer.Data.MusicInfo;
+import com.fcg.musicplayer.Fragment.MyFragment;
+import com.fcg.musicplayer.Controller.PlayerController;
+import com.fcg.musicplayer.Service.MediaService;
+import com.fcg.musicplayer.Unit.PermissionUnit;
+import com.google.android.material.navigation.NavigationView;
 import com.wajahatkarim3.easyflipviewpager.BookFlipPageTransformer;
 
 import java.util.ArrayList;
@@ -35,6 +39,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private MediaService mediaService;
     private FrameLayout playBar;
     private ViewPager viewPager;
@@ -51,9 +57,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         playBar = findViewById(R.id.play_bar);
-        PlayBarControl playBarControl = new PlayBarControl(playBar);
-        playBarControl.init(getSupportFragmentManager());
-        AudioUnit.get().addListener(playBarControl);
+
+        initNav();
+
+        PlayBarController playBarController = new PlayBarController(playBar);
+        playBarController.init(getSupportFragmentManager());
+        PlayerController.get().addListener(playBarController);
 
         PermissionUnit permissionUnit = new PermissionUnit(this);
         permissionUnit.applyPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
@@ -87,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        unbindService(connection);
+
         super.onStop();
     }
 
@@ -99,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             super(fm);
 
             musicInfos = getIntent().getParcelableArrayListExtra("music_list");
-            AudioUnit.get().updateMusicList(musicInfos);
+            PlayerController.get().updateMusicList(musicInfos);
             int len = musicInfos.size();
             float pages_f = (float)len / 10;
             int pages = (int)Math.ceil(pages_f);
@@ -135,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             MediaService.MediaBinder binder = (MediaService.MediaBinder) service;
             mediaService = binder.getService();
+            PlayerController.get().addCallback(mediaService);
         }
 
         @Override
@@ -142,4 +152,39 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        Log.d("mtest", "onDestroy: main");
+        unbindService(connection);
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            moveTaskToBack(true);
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void initNav(){
+        drawerLayout = findViewById(R.id.main_drawer);
+        navigationView = findViewById(R.id.nav_cover);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
+        params.width = metrics.widthPixels;
+        navigationView.setLayoutParams(params);
+
+        ListView listView = navigationView.findViewById(R.id.nav_list);
+        List<String> objects = new ArrayList<>();
+        objects.add("Test");
+        NavAdapter navAdapter = new NavAdapter(this,R.layout.my_item,objects);
+        listView.setAdapter(navAdapter);
+    }
+
 }

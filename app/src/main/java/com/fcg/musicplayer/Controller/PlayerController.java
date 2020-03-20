@@ -1,39 +1,38 @@
-package com.fcg.musicplayer;
+package com.fcg.musicplayer.Controller;
 
 
 import android.content.Context;
-import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.Display;
-import android.view.PointerIcon;
-import android.view.Window;
-import android.view.WindowManager;
 
-import androidx.fragment.app.FragmentManager;
+import com.fcg.musicplayer.Data.MusicInfo;
+import com.fcg.musicplayer.Listener.ServiceCallback;
+import com.fcg.musicplayer.Listener.PlayBarListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class AudioUnit {
+public class PlayerController {
 
+    private ServiceCallback callback;
     private PlayBarListener playBarListener;
     private MediaPlayer mediaPlayer;
     private int playPosition = -1;
     private Context context;
     private List<MusicInfo> musicPlayList = new ArrayList<>();
     private ArrayList<MusicInfo> musicInfos = new ArrayList<>();
-    private PlayBarControl playBarControl;
+    private PlayBarController playBarController;
     private Handler handler;
+    private boolean isMediaPlayerPrepare = false;
 
     private static class SingletonHolder{
-        private static AudioUnit instance = new AudioUnit();
+        private static PlayerController instance = new PlayerController();
     }
 
-    public static AudioUnit get(){
+    public static PlayerController get(){
         return SingletonHolder.instance;
     }
 
@@ -53,6 +52,7 @@ public class AudioUnit {
         this.musicInfos = musicInfos;
     }
 
+
     public void play(MusicInfo music){
         musicPlayList.add(music);
         playPosition ++;
@@ -63,6 +63,8 @@ public class AudioUnit {
             mediaPlayer.prepareAsync();
             playBarListener.onPlay(music);
             handler.post(mRunnable);
+            callback.onPlay();
+            isMediaPlayerPrepare = true;
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -79,6 +81,9 @@ public class AudioUnit {
 
     public void playNext(){
         int size = musicPlayList.size();
+        if(size == 0){
+            return;
+        }
         playPosition = (playPosition + 1) % size;
         MusicInfo musicInfo = musicPlayList.get(playPosition);
         try {
@@ -120,5 +125,17 @@ public class AudioUnit {
 
     public void addListener(PlayBarListener listener){
         this.playBarListener = listener;
+    }
+
+    public void addCallback(ServiceCallback callback){
+        this.callback = callback;
+    }
+
+    public boolean isMediaPlayerPrepare(){
+        if(isMediaPlayerPrepare){
+            return true;
+        }else {
+            return false;
+        }
     }
 }

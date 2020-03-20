@@ -1,25 +1,27 @@
 package com.fcg.musicplayer;
 
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.transition.Fade;
 import android.transition.Slide;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
-import android.transition.Visibility;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.Window;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.GestureDetectorCompat;
+
+import com.fcg.musicplayer.Data.MusicInfo;
+import com.fcg.musicplayer.Unit.MusicUnit;
 
 import java.util.ArrayList;
 
 public class SplashActivity extends AppCompatActivity {
 
     private ArrayList<MusicInfo> musicInfos;
+    private GestureDetectorCompat mGestureDetector;
+    Handler handler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,15 +36,30 @@ public class SplashActivity extends AppCompatActivity {
 
         musicInfos = MusicUnit.queryMusic(getApplicationContext());
 
-        Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent(SplashActivity.this,MainActivity.class);
                 intent.putParcelableArrayListExtra("music_list",musicInfos);
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SplashActivity.this).toBundle());
+                startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(SplashActivity.this).toBundle());
             }
         },1000);
+    }
 
+    @Override
+    protected void onPause() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        },1000);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("mtest", "onDestroy: splash");
+        super.onDestroy();
     }
 }

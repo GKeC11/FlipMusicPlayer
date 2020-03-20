@@ -26,7 +26,7 @@
             android:id="@+id/playBar_playBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_play_circle_filled_24dp"
+            android:background="@drawable/play_btn_style"
             android:layout_marginRight="10dp"/>
 
         <ImageView

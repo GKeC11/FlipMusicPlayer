@@ -1,4 +1,4 @@
-package com.fcg.musicplayer;
+package com.fcg.musicplayer.Data;
 
 import android.os.Bundle;
 import android.os.Parcel;

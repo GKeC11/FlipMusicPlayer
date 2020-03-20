@@ -13,14 +13,16 @@
         android:supportsRtl="true"
         android:theme="@style/MyAppTheme">
 
-        <service android:name=".MediaService"/>
+        <service android:name=".Service.MediaService">
+        </service>
 
         <activity android:name=".MainActivity"
             android:launchMode="singleTask">
 
         </activity>
 
-        <activity android:name=".SplashActivity">
+        <activity android:name=".SplashActivity"
+            android:launchMode="standard">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

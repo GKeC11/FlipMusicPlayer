@@ -1,4 +1,4 @@
-package com.fcg.musicplayer;
+package com.fcg.musicplayer.Unit;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;

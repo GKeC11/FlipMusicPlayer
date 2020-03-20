@@ -1,12 +1,6 @@
-package com.fcg.musicplayer;
+package com.fcg.musicplayer.Fragment;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +14,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.fcg.musicplayer.Data.MusicInfo;
+import com.fcg.musicplayer.Unit.DensityUnit;
+import com.fcg.musicplayer.MyAdapter;
+import com.fcg.musicplayer.R;
 
 import java.util.ArrayList;
 

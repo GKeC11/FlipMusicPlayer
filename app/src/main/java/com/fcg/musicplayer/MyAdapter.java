@@ -1,6 +1,5 @@
 package com.fcg.musicplayer;
 
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +7,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.fcg.musicplayer.Data.MusicInfo;
+import com.fcg.musicplayer.Listener.OnMusicClickListener;
 
 import java.util.List;
 
@@ -44,6 +46,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 @Override
                 public void onClick(View v) {
                     mListener.onClick(position);
+                }
+            });
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener(){
+                @Override
+                public boolean onLongClick(View v) {
+                    mListener.onLongClick(position);
+                    return false;
                 }
             });
         }

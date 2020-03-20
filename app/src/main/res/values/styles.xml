@@ -11,6 +11,7 @@
 
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
     
     <attr name="playBarBackground" format="reference"/>
