@@ -1,3 +1,5 @@
 # FlipMusicPlayer
 A Music Player with book flip interface
-![image](https://github.com/GKeC11/FlipMusicPlayer/blob/master/ezgif.com-resize.gif)
+![image](https://i.ibb.co/7knCjdL/ezgif-com-resize.gif)
+
+翻页效果EasyFlipViewPager : https://github.com/wajahatkarim3/EasyFlipViewPager
