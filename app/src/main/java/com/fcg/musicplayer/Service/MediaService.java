@@ -29,7 +29,6 @@ public class MediaService extends Service implements ServiceCallback {
     @Override
     public IBinder onBind(Intent intent) {
         PlayerController.get().init(this);
-        NotifionUnit.get().init(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotifionUnit.get().createNotificationChannel();
         }
@@ -42,5 +41,11 @@ public class MediaService extends Service implements ServiceCallback {
         NotificationCompat.Builder builder = NotifionUnit.get().getBuilder();
         Notification notification = builder.build();
         startForeground(110,notification);
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        PlayerController.get().onQuit();
+        return super.onUnbind(intent);
     }
 }

@@ -114,6 +114,11 @@ public class PlayerController {
         }
     };
 
+    public void onQuit(){
+        mediaPlayer.stop();
+        mediaPlayer = null;
+    }
+
 //    public void playListDialog(FragmentManager fm){
 //        MusicListDialogFragment dialogFragment = MusicListDialogFragment.newInstance((ArrayList<MusicInfo>)musicPlayList);
 //        dialogFragment.show(fm,null);

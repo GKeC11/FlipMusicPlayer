@@ -55,11 +55,16 @@
             android:orientation="vertical">
 
             <ListView
-                android:layout_marginTop="100dp"
+                android:paddingTop="100dp"
                 android:id="@+id/nav_list"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"/>
+
+<!--            <include-->
+<!--                layout="@layout/cover_ad"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
 
         </LinearLayout>
 

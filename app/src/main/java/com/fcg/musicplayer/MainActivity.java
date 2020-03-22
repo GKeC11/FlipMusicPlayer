@@ -24,6 +24,8 @@ import android.transition.Fade;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -185,10 +187,21 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setLayoutParams(params);
 
         ListView listView = navigationView.findViewById(R.id.nav_list);
-        List<String> objects = new ArrayList<>();
-        objects.add("Test");
-        NavAdapter navAdapter = new NavAdapter(this,R.layout.my_item,objects);
+        final List<String> objects = new ArrayList<>();
+        objects.add("Quit");
+        NavAdapter navAdapter = new NavAdapter(this,R.layout.nav_item,objects);
         listView.setAdapter(navAdapter);
+        listView.setOnItemClickListener(new ListView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (objects.get(position)){
+                    case "Quit":
+                        MainActivity.this.finish();
+                        break;
+                }
+            }
+        });
     }
 
 }

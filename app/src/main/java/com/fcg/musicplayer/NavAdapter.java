@@ -44,6 +44,7 @@ public class NavAdapter extends ArrayAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
+        viewHolder.textView.getPaint().setFakeBoldText(true);
         viewHolder.textView.setText(menuItem);
 
         return view;

@@ -8,6 +8,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/book_cover"
-        android:scaleType="fitXY"/>
+        android:scaleType="fitXY"
+        android:scaleX="1.01"
+        android:scaleY="1.01"/>
+
+<!--    <include layout="@layout/cover_ad"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"/>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

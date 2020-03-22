@@ -11,6 +11,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        AppCache.initAppCache(this);
         ToastUnit.init(this);
         DensityUnit.get().init(this);
     }

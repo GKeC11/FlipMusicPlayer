@@ -8,12 +8,13 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.fcg.musicplayer.AppCache;
 import com.fcg.musicplayer.R;
 
 public class NotifionUnit {
 
     public static final int Notify_Music_Player = 1;
-    private Context context;
+    private static Context context;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder mBuilder;
 
@@ -30,16 +31,16 @@ public class NotifionUnit {
         return channelId;
     }
 
-    public static class SingletonHolder{
+    private NotifionUnit(){
+        context = AppCache.getInstance().getContext();
+    }
+
+    private static class SingletonHolder{
         public static NotifionUnit instance = new NotifionUnit();
     }
 
     public static NotifionUnit get(){
         return SingletonHolder.instance;
-    }
-
-    public void init(Context context){
-        this.context = context;
     }
 
     public void showNotification(String channelId){
