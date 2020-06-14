@@ -23,22 +23,54 @@ public class PlayBarController implements View.OnClickListener, PlayBarListener 
     private FragmentManager fm;
     private ImageView playList;
     private ProgressBar progressBar;
-    ImageView play_btn;
+    private ImageView play_btn;
+    private ImageView next_btn;
+    private MusicInfo musicInfo;
+    private Boolean isInitial = false;
 
-    public PlayBarController(View view) {
+    private PlayBarController(){
+
+    }
+
+    private static class SingletonHolder{
+        private static PlayBarController instance = new PlayBarController();
+    }
+
+    public static PlayBarController get(){
+        return SingletonHolder.instance;
+    }
+
+    public void initialView(FragmentManager fm,View view){
+        this.fm = fm;
         frameLayout = (FrameLayout) view;
         musicName = view.findViewById(R.id.playBar_musicName);
         play_btn = view.findViewById(R.id.playBar_playBtn);
-        ImageView next_btn = view.findViewById(R.id.playBar_next);
+        next_btn = view.findViewById(R.id.playBar_next);
         playList = view.findViewById(R.id.playBar_musicList);
         progressBar = view.findViewById(R.id.playBar_progressBar);
         play_btn.setOnClickListener(this);
         next_btn.setOnClickListener(this);
         playList.setOnClickListener(this);
+        isInitial = true;
     }
 
-    public void init(FragmentManager fm){
+    public void updateView(FragmentManager fm,View view){
         this.fm = fm;
+        frameLayout = (FrameLayout) view;
+        musicName = view.findViewById(R.id.playBar_musicName);
+        play_btn = view.findViewById(R.id.playBar_playBtn);
+        next_btn = view.findViewById(R.id.playBar_next);
+        playList = view.findViewById(R.id.playBar_musicList);
+        progressBar = view.findViewById(R.id.playBar_progressBar);
+        play_btn.setOnClickListener(this);
+        next_btn.setOnClickListener(this);
+        playList.setOnClickListener(this);
+
+        if(PlayerController.get().getIsPlaying()){
+            musicInfo = PlayerController.get().getMusic();
+            musicName.setText(musicInfo.name);
+
+        }
     }
 
     @Override
@@ -46,13 +78,6 @@ public class PlayBarController implements View.OnClickListener, PlayBarListener 
         switch (v.getId()) {
             case R.id.playBar_playBtn:
                 PlayerController.get().playOrPause();
-                if(PlayerController.get().isMediaPlayerPrepare()){
-                    if(play_btn.isSelected()){
-                        play_btn.setSelected(false);
-                    }else{
-                        play_btn.setSelected(true);
-                    }
-                }
 
                 break;
 
@@ -77,13 +102,30 @@ public class PlayBarController implements View.OnClickListener, PlayBarListener 
 
     @Override
     public void onPlay(MusicInfo musicInfo) {
+        play_btn.setSelected(true);
         this.musicName.setText(musicInfo.name);
-        progressBar.setMax(Integer.parseInt(musicInfo.duration));
+        progressBar.setMax(musicInfo.duration);
         progressBar.setProgress((int) PlayerController.get().getCurrentPosition());
     }
 
     @Override
     public void onPlaying(int progress) {
         progressBar.setProgress(progress);
+    }
+
+    public Boolean getIsInitial(){
+        return isInitial;
+    }
+
+    public void onPlayBtn(){
+
+        if(PlayerController.get().isMediaPlayerPrepare()){
+            if(play_btn.isSelected()){
+                play_btn.setSelected(false);
+            }else{
+                play_btn.setSelected(true);
+            }
+        }
+
     }
 }

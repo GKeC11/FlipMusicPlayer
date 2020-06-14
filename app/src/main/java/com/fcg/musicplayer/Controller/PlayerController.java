@@ -9,6 +9,7 @@ import android.os.Looper;
 import com.fcg.musicplayer.Data.MusicInfo;
 import com.fcg.musicplayer.Listener.ServiceCallback;
 import com.fcg.musicplayer.Listener.PlayBarListener;
+import com.fcg.musicplayer.Unit.NotificationUnit;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ public class PlayerController {
     private Context context;
     private List<MusicInfo> musicPlayList = new ArrayList<>();
     private ArrayList<MusicInfo> musicInfos = new ArrayList<>();
-    private PlayBarController playBarController;
     private Handler handler;
     private boolean isMediaPlayerPrepare = false;
+    private boolean isNotificationBuild = false;
 
     private static class SingletonHolder{
         private static PlayerController instance = new PlayerController();
@@ -45,6 +46,7 @@ public class PlayerController {
                 mediaPlayer.start();
             }
         });
+
         handler = new Handler(Looper.getMainLooper());
     }
 
@@ -54,8 +56,9 @@ public class PlayerController {
 
 
     public void play(MusicInfo music){
+
         musicPlayList.add(music);
-        playPosition ++;
+        playPosition = musicPlayList.size() - 1;
         String path = music.path;
         try {
             mediaPlayer.reset();
@@ -63,20 +66,53 @@ public class PlayerController {
             mediaPlayer.prepareAsync();
             playBarListener.onPlay(music);
             handler.post(mRunnable);
-            callback.onPlay();
+            if(!isNotificationBuild){
+                callback.onFirstPlay();
+                isNotificationBuild = true;
+            }else{
+                NotificationUnit.get().onNewPlay(music);
+                callback.onChange();
+            }
+
             isMediaPlayerPrepare = true;
         }catch (IOException e){
             e.printStackTrace();
         }
     }
 
+    public void onChangeListener(){
+        if(musicPlayList.size() > 0)
+            playBarListener.onPlay(musicPlayList.get(playPosition));
+    }
+
+    public void playOnline(String url){
+//        mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+//        .setUsage(AudioAttributes.USAGE_MEDIA)
+//        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+//        .build());
+
+        try{
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.prepareAsync();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public void playOrPause(){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
+        if(PlayerController.get().isMediaPlayerPrepare()){
+            PlayBarController.get().onPlayBtn();
+            NotificationUnit.get().onChange();
+            callback.onChange();
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.pause();
+            }
+            else if(!mediaPlayer.isPlaying()){
+                mediaPlayer.start();
+            }
         }
-        else if(!mediaPlayer.isPlaying()){
-            mediaPlayer.start();
-        }
+
     }
 
     public void playNext(){
@@ -94,14 +130,19 @@ public class PlayerController {
         }catch (IOException e){
             e.printStackTrace();
         }
+
+        NotificationUnit.get().onNext(musicInfo);
+        callback.onChange();
     }
 
     public long getCurrentPosition(){
-        if(mediaPlayer.isPlaying()){
-            return mediaPlayer.getCurrentPosition();
-        }else{
-            return 0;
-        }
+
+        return mediaPlayer.getCurrentPosition();
+//        if(mediaPlayer.isPlaying()){
+//            return mediaPlayer.getCurrentPosition();
+//        }else{
+//            return 0;
+//        }
     }
 
     private Runnable mRunnable = new Runnable() {
@@ -132,6 +173,11 @@ public class PlayerController {
         this.playBarListener = listener;
     }
 
+    public void changeListener(PlayBarListener listener) {
+        this.playBarListener = listener;
+        onChangeListener();
+    }
+
     public void addCallback(ServiceCallback callback){
         this.callback = callback;
     }
@@ -142,5 +188,13 @@ public class PlayerController {
         }else {
             return false;
         }
+    }
+
+    public boolean getIsPlaying(){
+        return mediaPlayer.isPlaying();
+    }
+
+    public MusicInfo getMusic(){
+        return musicPlayList.get(playPosition);
     }
 }

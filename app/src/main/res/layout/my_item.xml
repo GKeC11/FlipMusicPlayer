@@ -3,15 +3,29 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="15dp"
-    android:paddingBottom="15dp">
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <TextView
         android:id="@+id/info_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textSize="20dp"
+        android:textSize="18dp"
         android:fontFamily="@font/my_font"
-        android:textAlignment="center"/>
+        android:textAlignment="viewStart"
+        android:paddingLeft="10dp"
+        android:hint="MusicName"
+        android:lines="1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/artist_textview"
+        android:textSize="14dp"
+        android:fontFamily="@font/my_font"
+        android:textAlignment="viewStart"
+        android:paddingLeft="10dp"
+        android:hint="ArtistName"
+        android:lines="1"/>
 
 </LinearLayout>

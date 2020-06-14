@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.spalsh_activity);
 
         PermissionUnit permissionUnit = new PermissionUnit(this);
-        permissionUnit.applyPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
+        permissionUnit.applyPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE});
 
         Slide slideTransition = new Slide();
         slideTransition.setSlideEdge(Gravity.LEFT);

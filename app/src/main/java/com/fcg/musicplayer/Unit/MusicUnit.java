@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 
 import com.fcg.musicplayer.Data.MusicInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MusicUnit {
@@ -41,10 +42,15 @@ public class MusicUnit {
         while(cursor.moveToNext()){
             MusicInfo musicInfo = new MusicInfo();
             musicInfo.name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-            musicInfo.size = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
-            musicInfo.duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+            musicInfo.size = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
+            musicInfo.duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
             musicInfo.path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-            musicInfos.add(musicInfo);
+            musicInfo.artists = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+            File file = new File(musicInfo.path);
+
+            if(file.exists()){
+                musicInfos.add(musicInfo);
+            }
         }
         cursor.close();
         return musicInfos;

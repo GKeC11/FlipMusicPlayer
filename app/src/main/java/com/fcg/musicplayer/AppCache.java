@@ -1,6 +1,8 @@
 package com.fcg.musicplayer;
 
 import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class AppCache {
     private static Context mContext;

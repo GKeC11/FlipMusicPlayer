@@ -19,10 +19,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     static class MyViewHolder extends RecyclerView.ViewHolder{
         TextView info_view;
+        TextView artist_textview;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             info_view = itemView.findViewById(R.id.info_view);
+            artist_textview = itemView.findViewById(R.id.artist_textview);
         }
     }
 
@@ -41,6 +43,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         MusicInfo musicInfo = musicInfoList.get(position);
         holder.info_view.setText(musicInfo.name);
+        holder.artist_textview.setText(musicInfo.artists);
         if(mListener != null){
             holder.itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

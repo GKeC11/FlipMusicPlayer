@@ -2,6 +2,7 @@ package com.fcg.musicplayer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -18,13 +19,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.transition.Fade;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -34,8 +39,12 @@ import com.fcg.musicplayer.Controller.PlayBarController;
 import com.fcg.musicplayer.Data.MusicInfo;
 import com.fcg.musicplayer.Fragment.MyFragment;
 import com.fcg.musicplayer.Controller.PlayerController;
+import com.fcg.musicplayer.Listener.MainActivityListener;
 import com.fcg.musicplayer.Service.MediaService;
 import com.fcg.musicplayer.Unit.PermissionUnit;
+import com.fcg.musicplayer.Unit.SearchUnit;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.wajahatkarim3.easyflipviewpager.BookFlipPageTransformer;
 
@@ -46,14 +55,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity implements MainActivityListener {
 
-    private DrawerLayout drawerLayout;
+    private ArrayList<MusicInfo> musicInfos;
     private NavigationView navigationView;
     private MediaService mediaService;
-    private FrameLayout playBar;
+    private DrawerLayout drawerLayout;
+    private FrameLayout contentFrame;
     private ViewPager viewPager;
     private Thread thread;
+    private ExtendedFloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,25 +73,57 @@ public class MainActivity extends AppCompatActivity {
         Fade enterTransition = new Fade();
         enterTransition.setDuration(200);
         getWindow().setEnterTransition(enterTransition);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View mainView = inflater.inflate(R.layout.activity_main,null);
 
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
+        musicInfos = getIntent().getParcelableArrayListExtra("music_list");
 
-        playBar = findViewById(R.id.play_bar);
+        floatingActionButton = mainView.findViewById(R.id.floating_button);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
+        contentFrame = findViewById(R.id.content_frame);
+        contentFrame.addView(mainView);
+//        playBar = findViewById(R.id.play_bar);
+
+        frameLayout = findViewById(R.id.play_bar);
+
+        SearchUnit.get().registerMainActivityListener(this);
 
         initNav();
-
-        PlayBarController playBarController = new PlayBarController(playBar);
-        playBarController.init(getSupportFragmentManager());
-        PlayerController.get().addListener(playBarController);
 
         viewPager = findViewById(R.id.viewPager);
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                PagerAdapter pagerAdapter = new MyFragmentAdapter(getSupportFragmentManager());
+                final PagerAdapter pagerAdapter = new MyFragmentAdapter(getSupportFragmentManager(),musicInfos,Constant.Local_Fragment);
                 viewPager.setAdapter(pagerAdapter);
                 viewPager.setClipToPadding(true);
                 viewPager.setPageTransformer(true, new BookFlipPageTransformer());
+                floatingActionButton.setText(1 + "/" + pagerAdapter.getCount());
+                viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        int pagerPosition = position + 1;
+                        floatingActionButton.setText(pagerPosition + "/" + pagerAdapter.getCount());
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
             }
         });
 
@@ -101,48 +144,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onStop() {
 
         super.onStop();
-    }
-
-    public class MyFragmentAdapter extends FragmentPagerAdapter{
-        private ArrayList<Fragment> fragments = new ArrayList<>();
-        private ArrayList<MusicInfo> musicInfos;
-
-        public MyFragmentAdapter(@NonNull FragmentManager fm) {
-            super(fm);
-
-            musicInfos = getIntent().getParcelableArrayListExtra("music_list");
-            PlayerController.get().updateMusicList(musicInfos);
-            int len = musicInfos.size();
-            float pages_f = (float)len / 10;
-            int pages = (int)Math.ceil(pages_f);
-            int page_end = 0;
-
-            for(int i = 0;i<pages;i++){
-                if(i * 10 + 10 > len){
-                    page_end = len;
-                }else{
-                    page_end = i * 10 + 10;
-                }
-                List<MusicInfo> temp = musicInfos.subList(i * 10,page_end);
-                ArrayList<MusicInfo> temp_list = new ArrayList<>(temp);
-                MyFragment fragment = MyFragment.newInstance(temp_list);
-                fragments.add(fragment);
-            }
-        }
-
-        @NonNull
-        @Override
-        public Fragment getItem(int position) {
-            return fragments.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.size();
-        }
     }
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -189,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = navigationView.findViewById(R.id.nav_list);
         final List<String> objects = new ArrayList<>();
         objects.add("Quit");
+        objects.add("Search");
         NavAdapter navAdapter = new NavAdapter(this,R.layout.nav_item,objects);
         listView.setAdapter(navAdapter);
         listView.setOnItemClickListener(new ListView.OnItemClickListener(){
@@ -199,9 +209,21 @@ public class MainActivity extends AppCompatActivity {
                     case "Quit":
                         MainActivity.this.finish();
                         break;
+
+                    case "Search":
+                        Intent intent = new Intent(MainActivity.this,SearchActivity.class);
+                        startActivity(intent);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        break;
                 }
             }
         });
     }
 
+    @Override
+    public void onDownloadSuccess(MusicInfo musicInfo) {
+        musicInfos.add(musicInfo);
+        MyFragmentAdapter fragmentAdapter = new MyFragmentAdapter(getSupportFragmentManager(),musicInfos,Constant.Local_Fragment);
+        viewPager.setAdapter(fragmentAdapter);
+    }
 }

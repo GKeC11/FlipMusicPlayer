@@ -10,8 +10,9 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.fcg.musicplayer.Data.MusicInfo;
 import com.fcg.musicplayer.Listener.ServiceCallback;
-import com.fcg.musicplayer.Unit.NotifionUnit;
+import com.fcg.musicplayer.Unit.NotificationUnit;
 import com.fcg.musicplayer.Controller.PlayerController;
 
 public class MediaService extends Service implements ServiceCallback {
@@ -30,16 +31,22 @@ public class MediaService extends Service implements ServiceCallback {
     public IBinder onBind(Intent intent) {
         PlayerController.get().init(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotifionUnit.get().createNotificationChannel();
+            NotificationUnit.get().createNotificationChannel();
         }
 
         return binder;
     }
 
     @Override
-    public void onPlay() {
-        NotificationCompat.Builder builder = NotifionUnit.get().getBuilder();
+    public void onFirstPlay() {
+        NotificationCompat.Builder builder = NotificationUnit.get().getBuilder(getPackageName());
         Notification notification = builder.build();
+        startForeground(110,notification);
+    }
+
+    @Override
+    public void onChange() {
+        Notification notification = NotificationUnit.get().getChangeNotification().build();
         startForeground(110,notification);
     }
 

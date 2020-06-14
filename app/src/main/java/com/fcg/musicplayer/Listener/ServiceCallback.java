@@ -1,5 +1,8 @@
 package com.fcg.musicplayer.Listener;
 
+import com.fcg.musicplayer.Data.MusicInfo;
+
 public interface ServiceCallback {
-    void onPlay();
+    void onChange();
+    void onFirstPlay();
 }

@@ -1,6 +1,7 @@
 package com.fcg.musicplayer.Unit;
 
 import android.content.Context;
+import android.os.Looper;
 import android.widget.Toast;
 
 public class ToastUnit {
@@ -17,10 +18,12 @@ public class ToastUnit {
 
     public static void show(String text) {
         if (sToast == null) {
+            Looper.prepare();
             sToast = Toast.makeText(sContext, text, Toast.LENGTH_SHORT);
         } else {
             sToast.setText(text);
         }
         sToast.show();
+        Looper.loop();
     }
 }

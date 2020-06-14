@@ -5,10 +5,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class MusicInfo implements Parcelable {
+    public int id;
     public String name;
-    public String size;
-    public String duration;
+    public int size;
+    public int duration;
     public String path;
+    public String artists;
+
+    public MusicInfo(){
+
+    }
+
+    public MusicInfo(String name){
+        this.name = name;
+    }
 
     public static final Creator<MusicInfo> CREATOR = new Creator<MusicInfo>() {
         @Override
@@ -16,10 +26,12 @@ public class MusicInfo implements Parcelable {
             MusicInfo musicInfo = new MusicInfo();
             Bundle bundle;
             bundle = in.readBundle();
+            musicInfo.id = bundle.getInt("id");
             musicInfo.name = bundle.getString("name");
-            musicInfo.size = bundle.getString("size");
-            musicInfo.duration = bundle.getString("duration");
+            musicInfo.size = bundle.getInt("size");
+            musicInfo.duration = bundle.getInt("duration");
             musicInfo.path = bundle.getString("path");
+            musicInfo.artists = bundle.getString("artists");
             return musicInfo;
         }
 
@@ -37,10 +49,12 @@ public class MusicInfo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         Bundle bundle = new Bundle();
+        bundle.putInt("id",id);
         bundle.putString("name",name);
-        bundle.putString("size",size);
-        bundle.putString("duration",duration);
+        bundle.putInt("size",size);
+        bundle.putInt("duration",duration);
         bundle.putString("path",path);
+        bundle.putString("artists",artists);
         dest.writeBundle(bundle);
     }
 }
